@@ -12,7 +12,7 @@ export async function createEmailController(
 ) {
     try {
         const { recipient, subject, body, scheduledAt } = req.body;
-
+        console.log("POST /api/emails reached");
         if (!recipient || !subject || !body || !scheduledAt) {
             return res.status(400).json({
                 error: "recipient, subject, body and scheduledAt are required"
