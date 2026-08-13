@@ -9,6 +9,10 @@ const connection = {
 
 const MAX_ATTEMPTS = 3;
 
+const concurrency = Number(
+    process.env.WORKER_CONCURRENCY
+);
+
 const worker = new Worker(
     "email-queue",
     async (job) => {
@@ -58,7 +62,10 @@ const worker = new Worker(
                 }
             });
 
-            console.log("Email sent successfully:", emailId);
+            console.log(
+                "Email sent successfully:",
+                emailId
+            );
 
             return {
                 success: true,
@@ -93,7 +100,8 @@ const worker = new Worker(
         }
     },
     {
-        connection
+        connection,
+        concurrency
     }
 );
 
@@ -108,4 +116,6 @@ worker.on("failed", (job, error) => {
     );
 });
 
-console.log("Email worker started...");
+console.log(
+    `Email worker started with concurrency: ${concurrency}`
+);
