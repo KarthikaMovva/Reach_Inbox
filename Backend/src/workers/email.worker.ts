@@ -1,4 +1,5 @@
 import { Worker } from "bullmq";
+import prisma from "../lib/prisma.js";
 
 const connection = {
     host: "localhost",
@@ -8,11 +9,29 @@ const connection = {
 const worker = new Worker(
     "email-queue",
     async (job) => {
-        console.log("Processing job:", job.id);
-        console.log("Job data:", job.data);
+        const { emailId } = job.data;
+
+        console.log("Processing email:", emailId);
+
+        const email = await prisma.email.findUnique({
+            where: {
+                id: emailId
+            }
+        });
+
+        if (!email) {
+            throw new Error(`Email ${emailId} not found`);
+        }
+
+        console.log("Email details:", {
+            recipient: email.recipient,
+            subject: email.subject,
+            scheduledAt: email.scheduledAt
+        });
 
         return {
-            success: true
+            success: true,
+            emailId
         };
     },
     {
@@ -25,7 +44,10 @@ worker.on("completed", (job) => {
 });
 
 worker.on("failed", (job, error) => {
-    console.error(`Job ${job?.id} failed:`, error.message);
+    console.error(
+        `Job ${job?.id} failed:`,
+        error.message
+    );
 });
 
 console.log("Email worker started...");

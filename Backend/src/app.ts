@@ -1,5 +1,5 @@
 import express from "express";
-import emailRoutes from "../src/routes/email.route";
+import emailRoutes from "./routes/email.route";
 
 const app = express();
 

@@ -1,4 +1,5 @@
 import prisma from "../lib/prisma.js";
+import { scheduleEmail } from "../queue/email.queue.ts";
 
 interface CreateEmailInput {
     recipient: string;
@@ -8,7 +9,7 @@ interface CreateEmailInput {
 }
 
 export async function createEmail(data: CreateEmailInput) {
-    return prisma.email.create({
+    const email = await prisma.email.create({
         data: {
             recipient: data.recipient,
             subject: data.subject,
@@ -16,6 +17,13 @@ export async function createEmail(data: CreateEmailInput) {
             scheduledAt: data.scheduledAt
         }
     });
+
+    await scheduleEmail(
+        email.id,
+        email.scheduledAt
+    );
+
+    return email;
 }
 
 export async function getAllEmails() {

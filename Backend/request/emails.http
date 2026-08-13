@@ -26,3 +26,16 @@ GET http://localhost:5000/api/emails/addd93e5-bd84-4fbd-81ef-b66e8773c099
 ### Delete Email
 # Replace the ID below with the ID returned by the Create Email request
 DELETE http://localhost:5000/api/emails/addd93e5-bd84-4fbd-81ef-b66e8773c099
+
+
+##Test after integrating redis and BullMQ
+### Create scheduled email
+POST http://localhost:5000/api/emails
+Content-Type: application/json
+
+{
+  "recipient": "test@example.com",
+  "subject": "Real BullMQ Test",
+  "body": "This email is being scheduled through the real API.",
+  "scheduledAt": "2026-08-13T13:16:11.000Z"
+}
