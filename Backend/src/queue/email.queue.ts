@@ -24,16 +24,33 @@ export async function scheduleEmail(
             emailId
         },
         {
+            jobId: emailId,
+
             delay,
+
             attempts: 3,
+
             backoff: {
                 type: "exponential",
                 delay: 5000
             },
+
             removeOnComplete: true,
             removeOnFail: false
         }
     );
 
     return job;
+}
+
+export async function cancelScheduledEmail(emailId: string) {
+    const job = await emailQueue.getJob(emailId);
+
+    if (!job) {
+        return false;
+    }
+
+    await job.remove();
+
+    return true;
 }

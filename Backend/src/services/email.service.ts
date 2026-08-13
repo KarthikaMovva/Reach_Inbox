@@ -1,5 +1,8 @@
 import prisma from "../lib/prisma.js";
-import { scheduleEmail } from "../queue/email.queue.ts";
+import {
+    scheduleEmail,
+    cancelScheduledEmail
+} from "../queue/email.queue.ts";
 
 interface CreateEmailInput {
     recipient: string;
@@ -43,6 +46,26 @@ export async function getEmailById(id: string) {
 }
 
 export async function deleteEmail(id: string) {
+    const email = await prisma.email.findUnique({
+        where: {
+            id
+        }
+    });
+
+    if (!email) {
+        throw new Error("Email not found");
+    }
+
+    if (email.status === "SCHEDULED") {
+        const cancelled = await cancelScheduledEmail(id);
+
+        if (!cancelled) {
+            throw new Error(
+                "Scheduled email job could not be cancelled"
+            );
+        }
+    }
+
     return prisma.email.delete({
         where: {
             id
