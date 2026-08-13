@@ -1,6 +1,7 @@
 import { Worker } from "bullmq";
 import prisma from "../lib/prisma.js";
 import { sendEmail } from "../services/email.sender.js";
+import { waitForEmailSendSlot } from "../utils/email.throttle.js";
 
 const connection = {
     host: "localhost",
@@ -43,7 +44,12 @@ const worker = new Worker(
         });
 
         try {
-            console.log("Sending email to:", email.recipient);
+            await waitForEmailSendSlot();
+
+            console.log(
+                `[${new Date().toISOString()}] Sending email to:`,
+                email.recipient
+            );
 
             await sendEmail({
                 recipient: email.recipient,
