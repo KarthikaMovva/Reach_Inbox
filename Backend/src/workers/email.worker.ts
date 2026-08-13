@@ -14,6 +14,10 @@ const concurrency = Number(
     process.env.WORKER_CONCURRENCY
 );
 
+const MAX_EMAILS_PER_HOUR = Number(
+    process.env.MAX_EMAILS_PER_HOUR ?? 200
+);
+
 const worker = new Worker(
     "email-queue",
     async (job) => {
@@ -33,7 +37,6 @@ const worker = new Worker(
             throw new Error(`Email ${emailId} not found`);
         }
 
-        // Mark as PROCESSING
         await prisma.email.update({
             where: {
                 id: emailId
@@ -57,7 +60,6 @@ const worker = new Worker(
                 body: email.body
             });
 
-            // Email successfully sent
             await prisma.email.update({
                 where: {
                     id: emailId
@@ -82,7 +84,8 @@ const worker = new Worker(
                 job.attemptsMade + 1 >= MAX_ATTEMPTS;
 
             console.error(
-                `Email sending failed | Attempt ${job.attemptsMade + 1}/${MAX_ATTEMPTS}`
+                `Email sending failed | Attempt ${job.attemptsMade + 1
+                }/${MAX_ATTEMPTS}`
             );
 
             if (isFinalAttempt) {
@@ -100,14 +103,16 @@ const worker = new Worker(
                 );
             }
 
-            // IMPORTANT:
-            // Tell BullMQ that this attempt failed.
             throw error;
         }
     },
     {
         connection,
-        concurrency
+        concurrency,
+        limiter: {
+            max: MAX_EMAILS_PER_HOUR,
+            duration: 60 * 60 * 1000
+        }
     }
 );
 
