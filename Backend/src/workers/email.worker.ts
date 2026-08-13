@@ -1,5 +1,6 @@
 import { Worker } from "bullmq";
 import prisma from "../lib/prisma.js";
+import { sendEmail } from "../services/email.sender.js";
 
 const connection = {
     host: "localhost",
@@ -23,16 +24,57 @@ const worker = new Worker(
             throw new Error(`Email ${emailId} not found`);
         }
 
-        console.log("Email details:", {
-            recipient: email.recipient,
-            subject: email.subject,
-            scheduledAt: email.scheduledAt
+        // Mark email as PROCESSING
+        await prisma.email.update({
+            where: {
+                id: emailId
+            },
+            data: {
+                status: "PROCESSING"
+            }
         });
 
-        return {
-            success: true,
-            emailId
-        };
+        try {
+            console.log("Sending email to:", email.recipient);
+
+            await sendEmail({
+                recipient: email.recipient,
+                subject: email.subject,
+                body: email.body
+            });
+
+            // Mark email as SENT
+            const updatedEmail = await prisma.email.update({
+                where: {
+                    id: emailId
+                },
+                data: {
+                    status: "SENT",
+                    sentAt: new Date()
+                }
+            });
+
+            console.log("Email sent successfully:", emailId);
+
+            return {
+                success: true,
+                emailId: updatedEmail.id
+            };
+        } catch (error) {
+            // Mark email as FAILED
+            await prisma.email.update({
+                where: {
+                    id: emailId
+                },
+                data: {
+                    status: "FAILED"
+                }
+            });
+
+            console.error("Email sending failed:", error);
+
+            throw error;
+        }
     },
     {
         connection
