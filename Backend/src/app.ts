@@ -1,4 +1,5 @@
 import express from "express";
+import emailRoutes from "../src/routes/email.route";
 
 const app = express();
 
@@ -10,5 +11,7 @@ app.get("/health", (_req, res) => {
         service: "reachinbox-backend"
     });
 });
+
+app.use("/api/emails", emailRoutes);
 
 export default app;
