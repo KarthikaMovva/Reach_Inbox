@@ -7,12 +7,16 @@ const connection = {
     port: 6379
 };
 
+const MAX_ATTEMPTS = 3;
+
 const worker = new Worker(
     "email-queue",
     async (job) => {
         const { emailId } = job.data;
 
-        console.log("Processing email:", emailId);
+        console.log(
+            `Processing email: ${emailId} | Attempt ${job.attemptsMade + 1}/${MAX_ATTEMPTS}`
+        );
 
         const email = await prisma.email.findUnique({
             where: {
@@ -24,7 +28,7 @@ const worker = new Worker(
             throw new Error(`Email ${emailId} not found`);
         }
 
-        // Mark email as PROCESSING
+        // Mark as PROCESSING
         await prisma.email.update({
             where: {
                 id: emailId
@@ -43,8 +47,8 @@ const worker = new Worker(
                 body: email.body
             });
 
-            // Mark email as SENT
-            const updatedEmail = await prisma.email.update({
+            // Email successfully sent
+            await prisma.email.update({
                 where: {
                     id: emailId
                 },
@@ -58,21 +62,33 @@ const worker = new Worker(
 
             return {
                 success: true,
-                emailId: updatedEmail.id
+                emailId
             };
         } catch (error) {
-            // Mark email as FAILED
-            await prisma.email.update({
-                where: {
-                    id: emailId
-                },
-                data: {
-                    status: "FAILED"
-                }
-            });
+            const isFinalAttempt =
+                job.attemptsMade + 1 >= MAX_ATTEMPTS;
 
-            console.error("Email sending failed:", error);
+            console.error(
+                `Email sending failed | Attempt ${job.attemptsMade + 1}/${MAX_ATTEMPTS}`
+            );
 
+            if (isFinalAttempt) {
+                await prisma.email.update({
+                    where: {
+                        id: emailId
+                    },
+                    data: {
+                        status: "FAILED"
+                    }
+                });
+
+                console.error(
+                    "All retry attempts exhausted. Email marked as FAILED."
+                );
+            }
+
+            // IMPORTANT:
+            // Tell BullMQ that this attempt failed.
             throw error;
         }
     },
