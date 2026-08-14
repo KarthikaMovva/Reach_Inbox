@@ -1,5 +1,10 @@
 # ReachInbox
 
+# Backend Deployed link: 
+https://reach-inbox-1-q596.onrender.com/
+
+
+
 A full-stack email management and scheduling application built with React,
 Node.js, PostgreSQL, Prisma, BullMQ, and Redis.
 
