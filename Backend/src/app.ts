@@ -24,6 +24,9 @@ app.use(
                 return callback(null, true);
             }
 
+            console.log("FRONTEND_URL:", process.env.FRONTEND_URL);
+            console.log("Allowed origins:", allowedOrigins);
+
             return callback(new Error("Not allowed by CORS"));
         },
         methods: ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"],
