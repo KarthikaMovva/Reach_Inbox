@@ -11,7 +11,7 @@ const connection = {
 const MAX_ATTEMPTS = 3;
 
 const concurrency = Number(
-    process.env.WORKER_CONCURRENCY
+    process.env.WORKER_CONCURRENCY ?? 5
 );
 
 const MAX_EMAILS_PER_HOUR = Number(
@@ -130,6 +130,41 @@ const worker = new Worker(
 
         try {
             await waitForEmailSendSlot();
+
+            // Re-check the database immediately before sending.
+            // This prevents sending an email that was cancelled
+            // while the worker was waiting.
+            const currentEmail = await prisma.email.findUnique({
+                where: {
+                    id: emailId
+                }
+            });
+
+            if (!currentEmail) {
+                console.log(
+                    `Email ${emailId} no longer exists. Skipping.`
+                );
+
+                return {
+                    success: true,
+                    emailId,
+                    skipped: true,
+                    reason: "EMAIL_NOT_FOUND"
+                };
+            }
+
+            if (currentEmail.status !== "PROCESSING") {
+                console.log(
+                    `Email ${emailId} is no longer processing. Current status: ${currentEmail.status}`
+                );
+
+                return {
+                    success: true,
+                    emailId,
+                    skipped: true,
+                    reason: "EMAIL_NOT_PROCESSING"
+                };
+            }
 
             console.log(
                 `[${new Date().toISOString()}] Sending email to:`,

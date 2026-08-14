@@ -22,8 +22,6 @@ export async function createEmailController(
             senderId
         } = req.body;
 
-        console.log("POST /api/emails reached");
-
         if (
             !recipient ||
             !subject ||
@@ -42,7 +40,8 @@ export async function createEmailController(
             subject,
             body,
             scheduledAt: new Date(scheduledAt),
-            senderId
+            senderId,
+            userId: req.userId
         });
 
         return res.status(201).json(email);
@@ -65,11 +64,11 @@ export async function createEmailController(
 }
 
 export async function getAllEmailsController(
-    _req: Request,
+    req: Request,
     res: Response
 ) {
     try {
-        const emails = await getAllEmails();
+        const emails = await getAllEmails(req.userId);
 
         return res.json(emails);
     } catch (error) {
@@ -86,7 +85,10 @@ export async function getEmailByIdController(
     res: Response
 ) {
     try {
-        const email = await getEmailById(req.params.id);
+        const email = await getEmailById(
+            req.params.id,
+            req.userId
+        );
 
         if (!email) {
             return res.status(404).json({
@@ -109,7 +111,10 @@ export async function deleteEmailController(
     res: Response
 ) {
     try {
-        const email = await deleteEmail(req.params.id);
+        const email = await deleteEmail(
+            req.params.id,
+            req.userId
+        );
 
         return res.json({
             message: "Email deleted successfully",
@@ -127,6 +132,16 @@ export async function deleteEmailController(
             });
         }
 
+        if (
+            error instanceof Error &&
+            error.message ===
+            "Scheduled email job could not be cancelled"
+        ) {
+            return res.status(500).json({
+                error: error.message
+            });
+        }
+
         return res.status(500).json({
             error: "Failed to delete email"
         });
@@ -134,11 +149,13 @@ export async function deleteEmailController(
 }
 
 export async function getScheduledEmailsController(
-    _req: Request,
+    req: Request,
     res: Response
 ) {
     try {
-        const emails = await getScheduledEmails();
+        const emails = await getScheduledEmails(
+            req.userId
+        );
 
         return res.json(emails);
     } catch (error) {
@@ -151,11 +168,13 @@ export async function getScheduledEmailsController(
 }
 
 export async function getSentEmailsController(
-    _req: Request,
+    req: Request,
     res: Response
 ) {
     try {
-        const emails = await getSentEmails();
+        const emails = await getSentEmails(
+            req.userId
+        );
 
         return res.json(emails);
     } catch (error) {
@@ -194,27 +213,31 @@ export async function updateEmailController(
             });
         }
 
-        const email = await updateEmail(id, {
-            ...(recipient !== undefined && {
-                recipient
-            }),
+        const email = await updateEmail(
+            id,
+            req.userId,
+            {
+                ...(recipient !== undefined && {
+                    recipient
+                }),
 
-            ...(subject !== undefined && {
-                subject
-            }),
+                ...(subject !== undefined && {
+                    subject
+                }),
 
-            ...(body !== undefined && {
-                body
-            }),
+                ...(body !== undefined && {
+                    body
+                }),
 
-            ...(scheduledAt !== undefined && {
-                scheduledAt: new Date(scheduledAt)
-            }),
+                ...(scheduledAt !== undefined && {
+                    scheduledAt: new Date(scheduledAt)
+                }),
 
-            ...(senderId !== undefined && {
-                senderId
-            })
-        });
+                ...(senderId !== undefined && {
+                    senderId
+                })
+            }
+        );
 
         return res.json(email);
     } catch (error) {
