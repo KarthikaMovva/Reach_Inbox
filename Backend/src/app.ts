@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 
-import emailRoutes from "./routes/email.route";
+import emailRoutes from "./routes/email.route.js";
 import senderRoutes from "./routes/sender.route.js";
 import authRouter from "./routes/auth.route.js";
 

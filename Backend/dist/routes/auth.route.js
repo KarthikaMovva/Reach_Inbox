@@ -1,10 +1,8 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const express_1 = require("express");
-const auth_controller_js_1 = require("../controllers/auth.controller.js");
-const auth_middleware_js_1 = require("../middleware/auth.middleware.js");
-const router = (0, express_1.Router)();
-router.post("/register", auth_controller_js_1.registerController);
-router.post("/login", auth_controller_js_1.loginController);
-router.get("/me", auth_middleware_js_1.authMiddleware, auth_controller_js_1.getMeController);
-exports.default = router;
+import { Router } from "express";
+import { registerController, loginController, getMeController } from "../controllers/auth.controller.js";
+import { authMiddleware } from "../middleware/auth.middleware.js";
+const router = Router();
+router.post("/register", registerController);
+router.post("/login", loginController);
+router.get("/me", authMiddleware, getMeController);
+export default router;

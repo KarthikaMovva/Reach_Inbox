@@ -1,23 +1,18 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.emailQueue = void 0;
-exports.scheduleEmail = scheduleEmail;
-exports.cancelScheduledEmail = cancelScheduledEmail;
-const bullmq_1 = require("bullmq");
+import { Queue } from "bullmq";
 const connection = {
     host: "localhost",
     port: 6379
 };
-exports.emailQueue = new bullmq_1.Queue("email-queue", {
+export const emailQueue = new Queue("email-queue", {
     connection
 });
-async function scheduleEmail(emailId, scheduledAt) {
+export async function scheduleEmail(emailId, scheduledAt) {
     const delay = Math.max(scheduledAt.getTime() - Date.now(), 0);
-    const existingJob = await exports.emailQueue.getJob(emailId);
+    const existingJob = await emailQueue.getJob(emailId);
     if (existingJob) {
         await existingJob.remove();
     }
-    const job = await exports.emailQueue.add("send-email", {
+    const job = await emailQueue.add("send-email", {
         emailId
     }, {
         jobId: emailId,
@@ -32,8 +27,8 @@ async function scheduleEmail(emailId, scheduledAt) {
     });
     return job;
 }
-async function cancelScheduledEmail(emailId) {
-    const job = await exports.emailQueue.getJob(emailId);
+export async function cancelScheduledEmail(emailId) {
+    const job = await emailQueue.getJob(emailId);
     // Job already disappeared from the queue.
     // Treat cancellation as successful.
     if (!job) {

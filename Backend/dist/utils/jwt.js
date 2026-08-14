@@ -1,16 +1,10 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.generateToken = generateToken;
-const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+import jwt from "jsonwebtoken";
 const JWT_SECRET = process.env.JWT_SECRET ?? "";
 if (!JWT_SECRET) {
     throw new Error("JWT_SECRET is not defined");
 }
-function generateToken(userId) {
-    return jsonwebtoken_1.default.sign({
+export function generateToken(userId) {
+    return jwt.sign({
         userId
     }, JWT_SECRET, {
         expiresIn: "1d"

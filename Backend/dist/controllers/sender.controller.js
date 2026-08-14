@@ -1,14 +1,7 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAllSendersController = getAllSendersController;
-exports.getSenderByIdController = getSenderByIdController;
-exports.createSenderController = createSenderController;
-exports.updateSenderController = updateSenderController;
-exports.deleteSenderController = deleteSenderController;
-const sender_service_js_1 = require("../services/sender.service.js");
-async function getAllSendersController(req, res) {
+import { getAllSenders, getSenderById, createSender, updateSender, deleteSender } from "../services/sender.service.js";
+export async function getAllSendersController(req, res) {
     try {
-        const senders = await (0, sender_service_js_1.getAllSenders)(req.userId);
+        const senders = await getAllSenders(req.userId);
         return res.json(senders);
     }
     catch (error) {
@@ -18,10 +11,10 @@ async function getAllSendersController(req, res) {
         });
     }
 }
-async function getSenderByIdController(req, res) {
+export async function getSenderByIdController(req, res) {
     try {
         const id = String(req.params.id);
-        const sender = await (0, sender_service_js_1.getSenderById)(id, req.userId);
+        const sender = await getSenderById(id, req.userId);
         if (!sender) {
             return res.status(404).json({
                 error: "Sender not found"
@@ -36,7 +29,7 @@ async function getSenderByIdController(req, res) {
         });
     }
 }
-async function createSenderController(req, res) {
+export async function createSenderController(req, res) {
     try {
         const { name, email } = req.body;
         if (!name || !email) {
@@ -44,7 +37,7 @@ async function createSenderController(req, res) {
                 error: "name and email are required"
             });
         }
-        const sender = await (0, sender_service_js_1.createSender)({
+        const sender = await createSender({
             name,
             email
         }, req.userId);
@@ -57,7 +50,7 @@ async function createSenderController(req, res) {
         });
     }
 }
-async function updateSenderController(req, res) {
+export async function updateSenderController(req, res) {
     try {
         const id = String(req.params.id);
         const { name, email } = req.body;
@@ -66,7 +59,7 @@ async function updateSenderController(req, res) {
                 error: "At least one field is required"
             });
         }
-        const sender = await (0, sender_service_js_1.updateSender)(id, req.userId, {
+        const sender = await updateSender(id, req.userId, {
             ...(name !== undefined && { name }),
             ...(email !== undefined && { email })
         });
@@ -85,10 +78,10 @@ async function updateSenderController(req, res) {
         });
     }
 }
-async function deleteSenderController(req, res) {
+export async function deleteSenderController(req, res) {
     try {
         const id = String(req.params.id);
-        const sender = await (0, sender_service_js_1.deleteSender)(id, req.userId);
+        const sender = await deleteSender(id, req.userId);
         return res.json(sender);
     }
     catch (error) {
