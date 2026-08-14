@@ -1,0 +1,13 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const sender_controller_js_1 = require("../controllers/sender.controller.js");
+const auth_middleware_js_1 = require("../middleware/auth.middleware.js");
+const router = (0, express_1.Router)();
+router.use(auth_middleware_js_1.authMiddleware);
+router.get("/", sender_controller_js_1.getAllSendersController);
+router.get("/:id", sender_controller_js_1.getSenderByIdController);
+router.post("/", sender_controller_js_1.createSenderController);
+router.patch("/:id", sender_controller_js_1.updateSenderController);
+router.delete("/:id", sender_controller_js_1.deleteSenderController);
+exports.default = router;
