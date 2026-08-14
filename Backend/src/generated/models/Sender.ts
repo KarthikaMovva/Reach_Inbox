@@ -28,6 +28,7 @@ export type SenderMinAggregateOutputType = {
   id: string | null
   name: string | null
   email: string | null
+  userId: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -36,6 +37,7 @@ export type SenderMaxAggregateOutputType = {
   id: string | null
   name: string | null
   email: string | null
+  userId: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -44,6 +46,7 @@ export type SenderCountAggregateOutputType = {
   id: number
   name: number
   email: number
+  userId: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -54,6 +57,7 @@ export type SenderMinAggregateInputType = {
   id?: true
   name?: true
   email?: true
+  userId?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -62,6 +66,7 @@ export type SenderMaxAggregateInputType = {
   id?: true
   name?: true
   email?: true
+  userId?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -70,6 +75,7 @@ export type SenderCountAggregateInputType = {
   id?: true
   name?: true
   email?: true
+  userId?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -151,6 +157,7 @@ export type SenderGroupByOutputType = {
   id: string
   name: string
   email: string
+  userId: string
   createdAt: Date
   updatedAt: Date
   _count: SenderCountAggregateOutputType | null
@@ -180,8 +187,10 @@ export type SenderWhereInput = {
   id?: Prisma.StringFilter<"Sender"> | string
   name?: Prisma.StringFilter<"Sender"> | string
   email?: Prisma.StringFilter<"Sender"> | string
+  userId?: Prisma.StringFilter<"Sender"> | string
   createdAt?: Prisma.DateTimeFilter<"Sender"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Sender"> | Date | string
+  user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   emails?: Prisma.EmailListRelationFilter
 }
 
@@ -189,8 +198,10 @@ export type SenderOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  user?: Prisma.UserOrderByWithRelationInput
   emails?: Prisma.EmailOrderByRelationAggregateInput
 }
 
@@ -201,8 +212,10 @@ export type SenderWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.SenderWhereInput[]
   NOT?: Prisma.SenderWhereInput | Prisma.SenderWhereInput[]
   name?: Prisma.StringFilter<"Sender"> | string
+  userId?: Prisma.StringFilter<"Sender"> | string
   createdAt?: Prisma.DateTimeFilter<"Sender"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Sender"> | Date | string
+  user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   emails?: Prisma.EmailListRelationFilter
 }, "id" | "email">
 
@@ -210,6 +223,7 @@ export type SenderOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.SenderCountOrderByAggregateInput
@@ -224,6 +238,7 @@ export type SenderScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"Sender"> | string
   name?: Prisma.StringWithAggregatesFilter<"Sender"> | string
   email?: Prisma.StringWithAggregatesFilter<"Sender"> | string
+  userId?: Prisma.StringWithAggregatesFilter<"Sender"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Sender"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Sender"> | Date | string
 }
@@ -234,6 +249,7 @@ export type SenderCreateInput = {
   email: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutSendersInput
   emails?: Prisma.EmailCreateNestedManyWithoutSenderInput
 }
 
@@ -241,6 +257,7 @@ export type SenderUncheckedCreateInput = {
   id?: string
   name: string
   email: string
+  userId: string
   createdAt?: Date | string
   updatedAt?: Date | string
   emails?: Prisma.EmailUncheckedCreateNestedManyWithoutSenderInput
@@ -252,6 +269,7 @@ export type SenderUpdateInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutSendersNestedInput
   emails?: Prisma.EmailUpdateManyWithoutSenderNestedInput
 }
 
@@ -259,6 +277,7 @@ export type SenderUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   emails?: Prisma.EmailUncheckedUpdateManyWithoutSenderNestedInput
@@ -268,6 +287,7 @@ export type SenderCreateManyInput = {
   id?: string
   name: string
   email: string
+  userId: string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -284,6 +304,7 @@ export type SenderUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -292,6 +313,7 @@ export type SenderCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -300,6 +322,7 @@ export type SenderMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -308,13 +331,24 @@ export type SenderMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
-export type SenderNullableScalarRelationFilter = {
-  is?: Prisma.SenderWhereInput | null
-  isNot?: Prisma.SenderWhereInput | null
+export type SenderScalarRelationFilter = {
+  is?: Prisma.SenderWhereInput
+  isNot?: Prisma.SenderWhereInput
+}
+
+export type SenderListRelationFilter = {
+  every?: Prisma.SenderWhereInput
+  some?: Prisma.SenderWhereInput
+  none?: Prisma.SenderWhereInput
+}
+
+export type SenderOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
 }
 
 export type StringFieldUpdateOperationsInput = {
@@ -331,14 +365,54 @@ export type SenderCreateNestedOneWithoutEmailsInput = {
   connect?: Prisma.SenderWhereUniqueInput
 }
 
-export type SenderUpdateOneWithoutEmailsNestedInput = {
+export type SenderUpdateOneRequiredWithoutEmailsNestedInput = {
   create?: Prisma.XOR<Prisma.SenderCreateWithoutEmailsInput, Prisma.SenderUncheckedCreateWithoutEmailsInput>
   connectOrCreate?: Prisma.SenderCreateOrConnectWithoutEmailsInput
   upsert?: Prisma.SenderUpsertWithoutEmailsInput
-  disconnect?: Prisma.SenderWhereInput | boolean
-  delete?: Prisma.SenderWhereInput | boolean
   connect?: Prisma.SenderWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.SenderUpdateToOneWithWhereWithoutEmailsInput, Prisma.SenderUpdateWithoutEmailsInput>, Prisma.SenderUncheckedUpdateWithoutEmailsInput>
+}
+
+export type SenderCreateNestedManyWithoutUserInput = {
+  create?: Prisma.XOR<Prisma.SenderCreateWithoutUserInput, Prisma.SenderUncheckedCreateWithoutUserInput> | Prisma.SenderCreateWithoutUserInput[] | Prisma.SenderUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.SenderCreateOrConnectWithoutUserInput | Prisma.SenderCreateOrConnectWithoutUserInput[]
+  createMany?: Prisma.SenderCreateManyUserInputEnvelope
+  connect?: Prisma.SenderWhereUniqueInput | Prisma.SenderWhereUniqueInput[]
+}
+
+export type SenderUncheckedCreateNestedManyWithoutUserInput = {
+  create?: Prisma.XOR<Prisma.SenderCreateWithoutUserInput, Prisma.SenderUncheckedCreateWithoutUserInput> | Prisma.SenderCreateWithoutUserInput[] | Prisma.SenderUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.SenderCreateOrConnectWithoutUserInput | Prisma.SenderCreateOrConnectWithoutUserInput[]
+  createMany?: Prisma.SenderCreateManyUserInputEnvelope
+  connect?: Prisma.SenderWhereUniqueInput | Prisma.SenderWhereUniqueInput[]
+}
+
+export type SenderUpdateManyWithoutUserNestedInput = {
+  create?: Prisma.XOR<Prisma.SenderCreateWithoutUserInput, Prisma.SenderUncheckedCreateWithoutUserInput> | Prisma.SenderCreateWithoutUserInput[] | Prisma.SenderUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.SenderCreateOrConnectWithoutUserInput | Prisma.SenderCreateOrConnectWithoutUserInput[]
+  upsert?: Prisma.SenderUpsertWithWhereUniqueWithoutUserInput | Prisma.SenderUpsertWithWhereUniqueWithoutUserInput[]
+  createMany?: Prisma.SenderCreateManyUserInputEnvelope
+  set?: Prisma.SenderWhereUniqueInput | Prisma.SenderWhereUniqueInput[]
+  disconnect?: Prisma.SenderWhereUniqueInput | Prisma.SenderWhereUniqueInput[]
+  delete?: Prisma.SenderWhereUniqueInput | Prisma.SenderWhereUniqueInput[]
+  connect?: Prisma.SenderWhereUniqueInput | Prisma.SenderWhereUniqueInput[]
+  update?: Prisma.SenderUpdateWithWhereUniqueWithoutUserInput | Prisma.SenderUpdateWithWhereUniqueWithoutUserInput[]
+  updateMany?: Prisma.SenderUpdateManyWithWhereWithoutUserInput | Prisma.SenderUpdateManyWithWhereWithoutUserInput[]
+  deleteMany?: Prisma.SenderScalarWhereInput | Prisma.SenderScalarWhereInput[]
+}
+
+export type SenderUncheckedUpdateManyWithoutUserNestedInput = {
+  create?: Prisma.XOR<Prisma.SenderCreateWithoutUserInput, Prisma.SenderUncheckedCreateWithoutUserInput> | Prisma.SenderCreateWithoutUserInput[] | Prisma.SenderUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.SenderCreateOrConnectWithoutUserInput | Prisma.SenderCreateOrConnectWithoutUserInput[]
+  upsert?: Prisma.SenderUpsertWithWhereUniqueWithoutUserInput | Prisma.SenderUpsertWithWhereUniqueWithoutUserInput[]
+  createMany?: Prisma.SenderCreateManyUserInputEnvelope
+  set?: Prisma.SenderWhereUniqueInput | Prisma.SenderWhereUniqueInput[]
+  disconnect?: Prisma.SenderWhereUniqueInput | Prisma.SenderWhereUniqueInput[]
+  delete?: Prisma.SenderWhereUniqueInput | Prisma.SenderWhereUniqueInput[]
+  connect?: Prisma.SenderWhereUniqueInput | Prisma.SenderWhereUniqueInput[]
+  update?: Prisma.SenderUpdateWithWhereUniqueWithoutUserInput | Prisma.SenderUpdateWithWhereUniqueWithoutUserInput[]
+  updateMany?: Prisma.SenderUpdateManyWithWhereWithoutUserInput | Prisma.SenderUpdateManyWithWhereWithoutUserInput[]
+  deleteMany?: Prisma.SenderScalarWhereInput | Prisma.SenderScalarWhereInput[]
 }
 
 export type SenderCreateWithoutEmailsInput = {
@@ -347,12 +421,14 @@ export type SenderCreateWithoutEmailsInput = {
   email: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutSendersInput
 }
 
 export type SenderUncheckedCreateWithoutEmailsInput = {
   id?: string
   name: string
   email: string
+  userId: string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -379,9 +455,101 @@ export type SenderUpdateWithoutEmailsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutSendersNestedInput
 }
 
 export type SenderUncheckedUpdateWithoutEmailsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type SenderCreateWithoutUserInput = {
+  id?: string
+  name: string
+  email: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  emails?: Prisma.EmailCreateNestedManyWithoutSenderInput
+}
+
+export type SenderUncheckedCreateWithoutUserInput = {
+  id?: string
+  name: string
+  email: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  emails?: Prisma.EmailUncheckedCreateNestedManyWithoutSenderInput
+}
+
+export type SenderCreateOrConnectWithoutUserInput = {
+  where: Prisma.SenderWhereUniqueInput
+  create: Prisma.XOR<Prisma.SenderCreateWithoutUserInput, Prisma.SenderUncheckedCreateWithoutUserInput>
+}
+
+export type SenderCreateManyUserInputEnvelope = {
+  data: Prisma.SenderCreateManyUserInput | Prisma.SenderCreateManyUserInput[]
+  skipDuplicates?: boolean
+}
+
+export type SenderUpsertWithWhereUniqueWithoutUserInput = {
+  where: Prisma.SenderWhereUniqueInput
+  update: Prisma.XOR<Prisma.SenderUpdateWithoutUserInput, Prisma.SenderUncheckedUpdateWithoutUserInput>
+  create: Prisma.XOR<Prisma.SenderCreateWithoutUserInput, Prisma.SenderUncheckedCreateWithoutUserInput>
+}
+
+export type SenderUpdateWithWhereUniqueWithoutUserInput = {
+  where: Prisma.SenderWhereUniqueInput
+  data: Prisma.XOR<Prisma.SenderUpdateWithoutUserInput, Prisma.SenderUncheckedUpdateWithoutUserInput>
+}
+
+export type SenderUpdateManyWithWhereWithoutUserInput = {
+  where: Prisma.SenderScalarWhereInput
+  data: Prisma.XOR<Prisma.SenderUpdateManyMutationInput, Prisma.SenderUncheckedUpdateManyWithoutUserInput>
+}
+
+export type SenderScalarWhereInput = {
+  AND?: Prisma.SenderScalarWhereInput | Prisma.SenderScalarWhereInput[]
+  OR?: Prisma.SenderScalarWhereInput[]
+  NOT?: Prisma.SenderScalarWhereInput | Prisma.SenderScalarWhereInput[]
+  id?: Prisma.StringFilter<"Sender"> | string
+  name?: Prisma.StringFilter<"Sender"> | string
+  email?: Prisma.StringFilter<"Sender"> | string
+  userId?: Prisma.StringFilter<"Sender"> | string
+  createdAt?: Prisma.DateTimeFilter<"Sender"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"Sender"> | Date | string
+}
+
+export type SenderCreateManyUserInput = {
+  id?: string
+  name: string
+  email: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type SenderUpdateWithoutUserInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  emails?: Prisma.EmailUpdateManyWithoutSenderNestedInput
+}
+
+export type SenderUncheckedUpdateWithoutUserInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  emails?: Prisma.EmailUncheckedUpdateManyWithoutSenderNestedInput
+}
+
+export type SenderUncheckedUpdateManyWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
@@ -424,8 +592,10 @@ export type SenderSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   id?: boolean
   name?: boolean
   email?: boolean
+  userId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   emails?: boolean | Prisma.Sender$emailsArgs<ExtArgs>
   _count?: boolean | Prisma.SenderCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["sender"]>
@@ -434,43 +604,55 @@ export type SenderSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   id?: boolean
   name?: boolean
   email?: boolean
+  userId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["sender"]>
 
 export type SenderSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
   email?: boolean
+  userId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["sender"]>
 
 export type SenderSelectScalar = {
   id?: boolean
   name?: boolean
   email?: boolean
+  userId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type SenderOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "email" | "createdAt" | "updatedAt", ExtArgs["result"]["sender"]>
+export type SenderOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "email" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["sender"]>
 export type SenderInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   emails?: boolean | Prisma.Sender$emailsArgs<ExtArgs>
   _count?: boolean | Prisma.SenderCountOutputTypeDefaultArgs<ExtArgs>
 }
-export type SenderIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
-export type SenderIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
+export type SenderIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+}
+export type SenderIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+}
 
 export type $SenderPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Sender"
   objects: {
+    user: Prisma.$UserPayload<ExtArgs>
     emails: Prisma.$EmailPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     name: string
     email: string
+    userId: string
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["sender"]>
@@ -867,6 +1049,7 @@ readonly fields: SenderFieldRefs;
  */
 export interface Prisma__SenderClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   emails<T extends Prisma.Sender$emailsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Sender$emailsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EmailPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -900,6 +1083,7 @@ export interface SenderFieldRefs {
   readonly id: Prisma.FieldRef<"Sender", 'String'>
   readonly name: Prisma.FieldRef<"Sender", 'String'>
   readonly email: Prisma.FieldRef<"Sender", 'String'>
+  readonly userId: Prisma.FieldRef<"Sender", 'String'>
   readonly createdAt: Prisma.FieldRef<"Sender", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Sender", 'DateTime'>
 }
@@ -1156,6 +1340,10 @@ export type SenderCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensio
    */
   data: Prisma.SenderCreateManyInput | Prisma.SenderCreateManyInput[]
   skipDuplicates?: boolean
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SenderIncludeCreateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1226,6 +1414,10 @@ export type SenderUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensio
    * Limit how many Senders to update.
    */
   limit?: number
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SenderIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**
