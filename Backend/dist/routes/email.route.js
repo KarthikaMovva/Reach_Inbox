@@ -1,0 +1,15 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const email_controller_js_1 = require("../controllers/email.controller.js");
+const auth_middleware_js_1 = require("../middleware/auth.middleware.js");
+const router = (0, express_1.Router)();
+router.use(auth_middleware_js_1.authMiddleware);
+router.post("/", email_controller_js_1.createEmailController);
+router.get("/scheduled", email_controller_js_1.getScheduledEmailsController);
+router.get("/sent", email_controller_js_1.getSentEmailsController);
+router.get("/", email_controller_js_1.getAllEmailsController);
+router.get("/:id", email_controller_js_1.getEmailByIdController);
+router.patch("/:id", email_controller_js_1.updateEmailController);
+router.delete("/:id", email_controller_js_1.deleteEmailController);
+exports.default = router;

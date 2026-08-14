@@ -85,8 +85,10 @@ export async function getEmailByIdController(
     res: Response
 ) {
     try {
+        const id = String(req.params.id);
+
         const email = await getEmailById(
-            req.params.id,
+            id,
             req.userId
         );
 
@@ -111,8 +113,10 @@ export async function deleteEmailController(
     res: Response
 ) {
     try {
+        const id = String(req.params.id);
+
         const email = await deleteEmail(
-            req.params.id,
+            id,
             req.userId
         );
 
@@ -191,7 +195,7 @@ export async function updateEmailController(
     res: Response
 ) {
     try {
-        const { id } = req.params;
+        const id = String(req.params.id);
 
         const {
             recipient,
