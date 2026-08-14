@@ -2,22 +2,37 @@ import prisma from "../lib/prisma.js";
 import {
     scheduleEmail,
     cancelScheduledEmail
-} from "../queue/email.queue.ts";
+} from "../queue/email.queue.js";
 
 interface CreateEmailInput {
     recipient: string;
     subject: string;
     body: string;
     scheduledAt: Date;
+    senderId: string;
 }
 
 export async function createEmail(data: CreateEmailInput) {
+    const sender = await prisma.sender.findUnique({
+        where: {
+            id: data.senderId
+        }
+    });
+
+    if (!sender) {
+        throw new Error("Sender not found");
+    }
+
     const email = await prisma.email.create({
         data: {
             recipient: data.recipient,
             subject: data.subject,
             body: data.body,
-            scheduledAt: data.scheduledAt
+            scheduledAt: data.scheduledAt,
+            senderId: data.senderId
+        },
+        include: {
+            sender: true
         }
     });
 
@@ -33,6 +48,9 @@ export async function getAllEmails() {
     return prisma.email.findMany({
         orderBy: {
             scheduledAt: "asc"
+        },
+        include: {
+            sender: true
         }
     });
 }
@@ -41,6 +59,9 @@ export async function getEmailById(id: string) {
     return prisma.email.findUnique({
         where: {
             id
+        },
+        include: {
+            sender: true
         }
     });
 }

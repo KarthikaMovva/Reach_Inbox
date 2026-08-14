@@ -1,5 +1,15 @@
 import nodemailer from "nodemailer";
 
+interface SendEmailInput {
+    recipient: string;
+    subject: string;
+    body: string;
+    sender: {
+        name: string;
+        email: string;
+    };
+}
+
 const transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
     port: Number(process.env.SMTP_PORT),
@@ -10,15 +20,9 @@ const transporter = nodemailer.createTransport({
     }
 });
 
-interface SendEmailInput {
-    recipient: string;
-    subject: string;
-    body: string;
-}
-
 export async function sendEmail(data: SendEmailInput) {
     const result = await transporter.sendMail({
-        from: process.env.SMTP_FROM,
+        from: `"${data.sender.name}" <${data.sender.email}>`,
         to: data.recipient,
         subject: data.subject,
         text: data.body

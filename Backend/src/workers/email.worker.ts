@@ -32,11 +32,20 @@ const worker = new Worker(
         const email = await prisma.email.findUnique({
             where: {
                 id: emailId
+            },
+            include: {
+                sender: true
             }
         });
 
         if (!email) {
             throw new Error(`Email ${emailId} not found`);
+        }
+
+        if (!email.sender) {
+            throw new Error(
+                `Sender not found for email ${emailId}`
+            );
         }
 
         /*
@@ -130,7 +139,8 @@ const worker = new Worker(
             await sendEmail({
                 recipient: email.recipient,
                 subject: email.subject,
-                body: email.body
+                body: email.body,
+                sender: email.sender
             });
 
             await prisma.email.update({

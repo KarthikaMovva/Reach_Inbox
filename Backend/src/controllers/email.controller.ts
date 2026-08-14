@@ -11,11 +11,26 @@ export async function createEmailController(
     res: Response
 ) {
     try {
-        const { recipient, subject, body, scheduledAt } = req.body;
+        const {
+            recipient,
+            subject,
+            body,
+            scheduledAt,
+            senderId
+        } = req.body;
+
         console.log("POST /api/emails reached");
-        if (!recipient || !subject || !body || !scheduledAt) {
+
+        if (
+            !recipient ||
+            !subject ||
+            !body ||
+            !scheduledAt ||
+            !senderId
+        ) {
             return res.status(400).json({
-                error: "recipient, subject, body and scheduledAt are required"
+                error:
+                    "recipient, subject, body, scheduledAt and senderId are required"
             });
         }
 
@@ -23,12 +38,22 @@ export async function createEmailController(
             recipient,
             subject,
             body,
-            scheduledAt: new Date(scheduledAt)
+            scheduledAt: new Date(scheduledAt),
+            senderId
         });
 
         return res.status(201).json(email);
     } catch (error) {
         console.error(error);
+
+        if (
+            error instanceof Error &&
+            error.message === "Sender not found"
+        ) {
+            return res.status(404).json({
+                error: "Sender not found"
+            });
+        }
 
         return res.status(500).json({
             error: "Failed to create email"
@@ -90,8 +115,17 @@ export async function deleteEmailController(
     } catch (error) {
         console.error(error);
 
-        return res.status(404).json({
-            error: "Email not found"
+        if (
+            error instanceof Error &&
+            error.message === "Email not found"
+        ) {
+            return res.status(404).json({
+                error: "Email not found"
+            });
+        }
+
+        return res.status(500).json({
+            error: "Failed to delete email"
         });
     }
 }
