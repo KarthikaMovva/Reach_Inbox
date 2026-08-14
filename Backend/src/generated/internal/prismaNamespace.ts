@@ -397,6 +397,7 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 
 
 export const ModelName = {
+  Sender: 'Sender',
   Email: 'Email'
 } as const
 
@@ -413,10 +414,84 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "email"
+    modelProps: "sender" | "email"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
+    Sender: {
+      payload: Prisma.$SenderPayload<ExtArgs>
+      fields: Prisma.SenderFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.SenderFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SenderPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.SenderFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SenderPayload>
+        }
+        findFirst: {
+          args: Prisma.SenderFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SenderPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.SenderFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SenderPayload>
+        }
+        findMany: {
+          args: Prisma.SenderFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SenderPayload>[]
+        }
+        create: {
+          args: Prisma.SenderCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SenderPayload>
+        }
+        createMany: {
+          args: Prisma.SenderCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.SenderCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SenderPayload>[]
+        }
+        delete: {
+          args: Prisma.SenderDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SenderPayload>
+        }
+        update: {
+          args: Prisma.SenderUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SenderPayload>
+        }
+        deleteMany: {
+          args: Prisma.SenderDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.SenderUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.SenderUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SenderPayload>[]
+        }
+        upsert: {
+          args: Prisma.SenderUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SenderPayload>
+        }
+        aggregate: {
+          args: Prisma.SenderAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateSender>
+        }
+        groupBy: {
+          args: Prisma.SenderGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SenderGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.SenderCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SenderCountAggregateOutputType> | number
+        }
+      }
+    }
     Email: {
       payload: Prisma.$EmailPayload<ExtArgs>
       fields: Prisma.EmailFieldRefs
@@ -530,6 +605,17 @@ export const TransactionIsolationLevel = runtime.makeStrictEnum({
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
 
 
+export const SenderScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  email: 'email',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SenderScalarFieldEnum = (typeof SenderScalarFieldEnum)[keyof typeof SenderScalarFieldEnum]
+
+
 export const EmailScalarFieldEnum = {
   id: 'id',
   recipient: 'recipient',
@@ -538,6 +624,7 @@ export const EmailScalarFieldEnum = {
   scheduledAt: 'scheduledAt',
   sentAt: 'sentAt',
   status: 'status',
+  senderId: 'senderId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -781,6 +868,7 @@ export interface PrismaClientOptionsWithAdapter extends PrismaClientBaseOptions 
  */
 export type PrismaClientOptions = PrismaClientOptionsWithAccelerateUrl | PrismaClientOptionsWithAdapter
 export type GlobalOmitConfig = {
+  sender?: Prisma.SenderOmit
   email?: Prisma.EmailOmit
 }
 
