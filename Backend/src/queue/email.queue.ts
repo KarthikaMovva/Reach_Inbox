@@ -1,12 +1,19 @@
+import "dotenv/config";
 import { Queue } from "bullmq";
+import { Redis } from "ioredis";
 
-const connection = {
-    host: "localhost",
-    port: 6379
-};
+const redisUrl = process.env.REDIS_URL;
+
+if (!redisUrl) {
+    throw new Error("REDIS_URL is not configured");
+}
+
+const connection = new Redis(redisUrl, {
+    maxRetriesPerRequest: null,
+});
 
 export const emailQueue = new Queue("email-queue", {
-    connection
+    connection,
 });
 
 export async function scheduleEmail(
@@ -27,7 +34,7 @@ export async function scheduleEmail(
     const job = await emailQueue.add(
         "send-email",
         {
-            emailId
+            emailId,
         },
         {
             jobId: emailId,
@@ -38,11 +45,11 @@ export async function scheduleEmail(
 
             backoff: {
                 type: "exponential",
-                delay: 5000
+                delay: 5000,
             },
 
             removeOnComplete: true,
-            removeOnFail: false
+            removeOnFail: false,
         }
     );
 
@@ -54,8 +61,6 @@ export async function cancelScheduledEmail(
 ) {
     const job = await emailQueue.getJob(emailId);
 
-    // Job already disappeared from the queue.
-    // Treat cancellation as successful.
     if (!job) {
         return true;
     }
