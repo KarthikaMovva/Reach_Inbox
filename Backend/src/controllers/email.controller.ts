@@ -2,8 +2,11 @@ import { Request, Response } from "express";
 import {
     createEmail,
     getAllEmails,
+    getScheduledEmails,
+    getSentEmails,
     getEmailById,
-    deleteEmail
+    deleteEmail,
+    updateEmail
 } from "../services/email.service.js";
 
 export async function createEmailController(
@@ -126,6 +129,137 @@ export async function deleteEmailController(
 
         return res.status(500).json({
             error: "Failed to delete email"
+        });
+    }
+}
+
+export async function getScheduledEmailsController(
+    _req: Request,
+    res: Response
+) {
+    try {
+        const emails = await getScheduledEmails();
+
+        return res.json(emails);
+    } catch (error) {
+        console.error(error);
+
+        return res.status(500).json({
+            error: "Failed to fetch scheduled emails"
+        });
+    }
+}
+
+export async function getSentEmailsController(
+    _req: Request,
+    res: Response
+) {
+    try {
+        const emails = await getSentEmails();
+
+        return res.json(emails);
+    } catch (error) {
+        console.error(error);
+
+        return res.status(500).json({
+            error: "Failed to fetch sent emails"
+        });
+    }
+}
+
+export async function updateEmailController(
+    req: Request,
+    res: Response
+) {
+    try {
+        const { id } = req.params;
+
+        const {
+            recipient,
+            subject,
+            body,
+            scheduledAt,
+            senderId
+        } = req.body;
+
+        if (
+            recipient === undefined &&
+            subject === undefined &&
+            body === undefined &&
+            scheduledAt === undefined &&
+            senderId === undefined
+        ) {
+            return res.status(400).json({
+                error: "At least one field is required"
+            });
+        }
+
+        const email = await updateEmail(id, {
+            ...(recipient !== undefined && {
+                recipient
+            }),
+
+            ...(subject !== undefined && {
+                subject
+            }),
+
+            ...(body !== undefined && {
+                body
+            }),
+
+            ...(scheduledAt !== undefined && {
+                scheduledAt: new Date(scheduledAt)
+            }),
+
+            ...(senderId !== undefined && {
+                senderId
+            })
+        });
+
+        return res.json(email);
+    } catch (error) {
+        console.error(error);
+
+        if (
+            error instanceof Error &&
+            error.message === "Email not found"
+        ) {
+            return res.status(404).json({
+                error: "Email not found"
+            });
+        }
+
+        if (
+            error instanceof Error &&
+            error.message === "Sender not found"
+        ) {
+            return res.status(404).json({
+                error: "Sender not found"
+            });
+        }
+
+        if (
+            error instanceof Error &&
+            error.message ===
+            "Only scheduled emails can be updated"
+        ) {
+            return res.status(409).json({
+                error: error.message
+            });
+        }
+
+        if (
+            error instanceof Error &&
+            error.message ===
+            "Scheduled email job could not be cancelled"
+        ) {
+            return res.status(500).json({
+                error: error.message
+            });
+        }
+
+        return res.status(500).json({
+            error: "Failed to update email"
         });
     }
 }
