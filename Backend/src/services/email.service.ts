@@ -10,6 +10,7 @@ interface CreateEmailInput {
     body: string;
     scheduledAt: Date;
     senderId: string;
+    userId: string;
 }
 
 interface UpdateEmailInput {
@@ -20,10 +21,13 @@ interface UpdateEmailInput {
     senderId?: string;
 }
 
-export async function createEmail(data: CreateEmailInput) {
-    const sender = await prisma.sender.findUnique({
+export async function createEmail(
+    data: CreateEmailInput
+) {
+    const sender = await prisma.sender.findFirst({
         where: {
-            id: data.senderId
+            id: data.senderId,
+            userId: data.userId
         }
     });
 
@@ -52,8 +56,15 @@ export async function createEmail(data: CreateEmailInput) {
     return email;
 }
 
-export async function getAllEmails() {
+export async function getAllEmails(
+    userId: string
+) {
     return prisma.email.findMany({
+        where: {
+            sender: {
+                userId
+            }
+        },
         orderBy: {
             scheduledAt: "asc"
         },
@@ -63,10 +74,16 @@ export async function getAllEmails() {
     });
 }
 
-export async function getEmailById(id: string) {
-    return prisma.email.findUnique({
+export async function getEmailById(
+    id: string,
+    userId: string
+) {
+    return prisma.email.findFirst({
         where: {
-            id
+            id,
+            sender: {
+                userId
+            }
         },
         include: {
             sender: true
@@ -74,10 +91,16 @@ export async function getEmailById(id: string) {
     });
 }
 
-export async function deleteEmail(id: string) {
-    const email = await prisma.email.findUnique({
+export async function deleteEmail(
+    id: string,
+    userId: string
+) {
+    const email = await prisma.email.findFirst({
         where: {
-            id
+            id,
+            sender: {
+                userId
+            }
         }
     });
 
@@ -102,10 +125,15 @@ export async function deleteEmail(id: string) {
     });
 }
 
-export async function getScheduledEmails() {
+export async function getScheduledEmails(
+    userId: string
+) {
     return prisma.email.findMany({
         where: {
-            status: "SCHEDULED"
+            status: "SCHEDULED",
+            sender: {
+                userId
+            }
         },
         include: {
             sender: true
@@ -116,11 +144,16 @@ export async function getScheduledEmails() {
     });
 }
 
-export async function getSentEmails() {
+export async function getSentEmails(
+    userId: string
+) {
     return prisma.email.findMany({
         where: {
             status: {
                 in: ["SENT", "FAILED"]
+            },
+            sender: {
+                userId
             }
         },
         include: {
@@ -134,13 +167,18 @@ export async function getSentEmails() {
 
 export async function updateEmail(
     id: string,
+    userId: string,
     data: UpdateEmailInput
 ) {
-    const existingEmail = await prisma.email.findUnique({
-        where: {
-            id
-        }
-    });
+    const existingEmail =
+        await prisma.email.findFirst({
+            where: {
+                id,
+                sender: {
+                    userId
+                }
+            }
+        });
 
     if (!existingEmail) {
         throw new Error("Email not found");
@@ -153,11 +191,13 @@ export async function updateEmail(
     }
 
     if (data.senderId) {
-        const sender = await prisma.sender.findUnique({
-            where: {
-                id: data.senderId
-            }
-        });
+        const sender =
+            await prisma.sender.findFirst({
+                where: {
+                    id: data.senderId,
+                    userId
+                }
+            });
 
         if (!sender) {
             throw new Error("Sender not found");
@@ -170,7 +210,8 @@ export async function updateEmail(
         existingEmail.scheduledAt.getTime();
 
     if (scheduledAtChanged) {
-        const cancelled = await cancelScheduledEmail(id);
+        const cancelled =
+            await cancelScheduledEmail(id);
 
         if (!cancelled) {
             throw new Error(
@@ -179,35 +220,36 @@ export async function updateEmail(
         }
     }
 
-    const updatedEmail = await prisma.email.update({
-        where: {
-            id
-        },
-        data: {
-            ...(data.recipient !== undefined && {
-                recipient: data.recipient
-            }),
+    const updatedEmail =
+        await prisma.email.update({
+            where: {
+                id
+            },
+            data: {
+                ...(data.recipient !== undefined && {
+                    recipient: data.recipient
+                }),
 
-            ...(data.subject !== undefined && {
-                subject: data.subject
-            }),
+                ...(data.subject !== undefined && {
+                    subject: data.subject
+                }),
 
-            ...(data.body !== undefined && {
-                body: data.body
-            }),
+                ...(data.body !== undefined && {
+                    body: data.body
+                }),
 
-            ...(data.scheduledAt !== undefined && {
-                scheduledAt: data.scheduledAt
-            }),
+                ...(data.scheduledAt !== undefined && {
+                    scheduledAt: data.scheduledAt
+                }),
 
-            ...(data.senderId !== undefined && {
-                senderId: data.senderId
-            })
-        },
-        include: {
-            sender: true
-        }
-    });
+                ...(data.senderId !== undefined && {
+                    senderId: data.senderId
+                })
+            },
+            include: {
+                sender: true
+            }
+        });
 
     if (scheduledAtChanged) {
         await scheduleEmail(

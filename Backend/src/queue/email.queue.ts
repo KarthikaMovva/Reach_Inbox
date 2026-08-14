@@ -18,6 +18,12 @@ export async function scheduleEmail(
         0
     );
 
+    const existingJob = await emailQueue.getJob(emailId);
+
+    if (existingJob) {
+        await existingJob.remove();
+    }
+
     const job = await emailQueue.add(
         "send-email",
         {
@@ -43,11 +49,15 @@ export async function scheduleEmail(
     return job;
 }
 
-export async function cancelScheduledEmail(emailId: string) {
+export async function cancelScheduledEmail(
+    emailId: string
+) {
     const job = await emailQueue.getJob(emailId);
 
+    // Job already disappeared from the queue.
+    // Treat cancellation as successful.
     if (!job) {
-        return false;
+        return true;
     }
 
     await job.remove();
