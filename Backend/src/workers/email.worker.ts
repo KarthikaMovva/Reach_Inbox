@@ -1,12 +1,20 @@
+import "dotenv/config";
 import { Worker } from "bullmq";
+import { Redis } from "ioredis";
+
 import prisma from "../lib/prisma.js";
 import { sendEmail } from "../services/email.sender.js";
 import { waitForEmailSendSlot } from "../utils/email.throttle.js";
 
-const connection = {
-    host: "localhost",
-    port: 6379
-};
+const redisUrl = process.env.REDIS_URL;
+
+if (!redisUrl) {
+    throw new Error("REDIS_URL is not configured");
+}
+
+const connection = new Redis(redisUrl, {
+    maxRetriesPerRequest: null
+});
 
 const MAX_ATTEMPTS = 3;
 

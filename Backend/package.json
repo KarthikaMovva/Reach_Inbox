@@ -9,7 +9,8 @@
     "build": "tsc",
     "start": "node dist/server.js",
     "worker": "tsx src/workers/email.worker.ts",
-    "start:worker": "node dist/workers/email.worker.js"
+    "start:worker": "node dist/workers/email.worker.js",
+    "start:production": "node dist/start-production.js"
   },
   "keywords": [],
   "author": "",
