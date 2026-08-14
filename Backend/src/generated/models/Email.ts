@@ -185,7 +185,7 @@ export type EmailGroupByOutputType = {
   scheduledAt: Date
   sentAt: Date | null
   status: $Enums.EmailStatus
-  senderId: string | null
+  senderId: string
   createdAt: Date
   updatedAt: Date
   _count: EmailCountAggregateOutputType | null
@@ -219,10 +219,10 @@ export type EmailWhereInput = {
   scheduledAt?: Prisma.DateTimeFilter<"Email"> | Date | string
   sentAt?: Prisma.DateTimeNullableFilter<"Email"> | Date | string | null
   status?: Prisma.EnumEmailStatusFilter<"Email"> | $Enums.EmailStatus
-  senderId?: Prisma.StringNullableFilter<"Email"> | string | null
+  senderId?: Prisma.StringFilter<"Email"> | string
   createdAt?: Prisma.DateTimeFilter<"Email"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Email"> | Date | string
-  sender?: Prisma.XOR<Prisma.SenderNullableScalarRelationFilter, Prisma.SenderWhereInput> | null
+  sender?: Prisma.XOR<Prisma.SenderScalarRelationFilter, Prisma.SenderWhereInput>
 }
 
 export type EmailOrderByWithRelationInput = {
@@ -233,7 +233,7 @@ export type EmailOrderByWithRelationInput = {
   scheduledAt?: Prisma.SortOrder
   sentAt?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
-  senderId?: Prisma.SortOrderInput | Prisma.SortOrder
+  senderId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   sender?: Prisma.SenderOrderByWithRelationInput
@@ -250,10 +250,10 @@ export type EmailWhereUniqueInput = Prisma.AtLeast<{
   scheduledAt?: Prisma.DateTimeFilter<"Email"> | Date | string
   sentAt?: Prisma.DateTimeNullableFilter<"Email"> | Date | string | null
   status?: Prisma.EnumEmailStatusFilter<"Email"> | $Enums.EmailStatus
-  senderId?: Prisma.StringNullableFilter<"Email"> | string | null
+  senderId?: Prisma.StringFilter<"Email"> | string
   createdAt?: Prisma.DateTimeFilter<"Email"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Email"> | Date | string
-  sender?: Prisma.XOR<Prisma.SenderNullableScalarRelationFilter, Prisma.SenderWhereInput> | null
+  sender?: Prisma.XOR<Prisma.SenderScalarRelationFilter, Prisma.SenderWhereInput>
 }, "id">
 
 export type EmailOrderByWithAggregationInput = {
@@ -264,7 +264,7 @@ export type EmailOrderByWithAggregationInput = {
   scheduledAt?: Prisma.SortOrder
   sentAt?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
-  senderId?: Prisma.SortOrderInput | Prisma.SortOrder
+  senderId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.EmailCountOrderByAggregateInput
@@ -283,7 +283,7 @@ export type EmailScalarWhereWithAggregatesInput = {
   scheduledAt?: Prisma.DateTimeWithAggregatesFilter<"Email"> | Date | string
   sentAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Email"> | Date | string | null
   status?: Prisma.EnumEmailStatusWithAggregatesFilter<"Email"> | $Enums.EmailStatus
-  senderId?: Prisma.StringNullableWithAggregatesFilter<"Email"> | string | null
+  senderId?: Prisma.StringWithAggregatesFilter<"Email"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Email"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Email"> | Date | string
 }
@@ -298,7 +298,7 @@ export type EmailCreateInput = {
   status?: $Enums.EmailStatus
   createdAt?: Date | string
   updatedAt?: Date | string
-  sender?: Prisma.SenderCreateNestedOneWithoutEmailsInput
+  sender: Prisma.SenderCreateNestedOneWithoutEmailsInput
 }
 
 export type EmailUncheckedCreateInput = {
@@ -309,7 +309,7 @@ export type EmailUncheckedCreateInput = {
   scheduledAt: Date | string
   sentAt?: Date | string | null
   status?: $Enums.EmailStatus
-  senderId?: string | null
+  senderId: string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -324,7 +324,7 @@ export type EmailUpdateInput = {
   status?: Prisma.EnumEmailStatusFieldUpdateOperationsInput | $Enums.EmailStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  sender?: Prisma.SenderUpdateOneWithoutEmailsNestedInput
+  sender?: Prisma.SenderUpdateOneRequiredWithoutEmailsNestedInput
 }
 
 export type EmailUncheckedUpdateInput = {
@@ -335,7 +335,7 @@ export type EmailUncheckedUpdateInput = {
   scheduledAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.EnumEmailStatusFieldUpdateOperationsInput | $Enums.EmailStatus
-  senderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  senderId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -348,7 +348,7 @@ export type EmailCreateManyInput = {
   scheduledAt: Date | string
   sentAt?: Date | string | null
   status?: $Enums.EmailStatus
-  senderId?: string | null
+  senderId: string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -373,7 +373,7 @@ export type EmailUncheckedUpdateManyInput = {
   scheduledAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.EnumEmailStatusFieldUpdateOperationsInput | $Enums.EmailStatus
-  senderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  senderId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -477,10 +477,6 @@ export type EnumEmailStatusFieldUpdateOperationsInput = {
   set?: $Enums.EmailStatus
 }
 
-export type NullableStringFieldUpdateOperationsInput = {
-  set?: string | null
-}
-
 export type EmailCreateWithoutSenderInput = {
   id?: string
   recipient: string
@@ -542,7 +538,7 @@ export type EmailScalarWhereInput = {
   scheduledAt?: Prisma.DateTimeFilter<"Email"> | Date | string
   sentAt?: Prisma.DateTimeNullableFilter<"Email"> | Date | string | null
   status?: Prisma.EnumEmailStatusFilter<"Email"> | $Enums.EmailStatus
-  senderId?: Prisma.StringNullableFilter<"Email"> | string | null
+  senderId?: Prisma.StringFilter<"Email"> | string
   createdAt?: Prisma.DateTimeFilter<"Email"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Email"> | Date | string
 }
@@ -608,7 +604,7 @@ export type EmailSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   senderId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  sender?: boolean | Prisma.Email$senderArgs<ExtArgs>
+  sender?: boolean | Prisma.SenderDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["email"]>
 
 export type EmailSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -622,7 +618,7 @@ export type EmailSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   senderId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  sender?: boolean | Prisma.Email$senderArgs<ExtArgs>
+  sender?: boolean | Prisma.SenderDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["email"]>
 
 export type EmailSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -636,7 +632,7 @@ export type EmailSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   senderId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  sender?: boolean | Prisma.Email$senderArgs<ExtArgs>
+  sender?: boolean | Prisma.SenderDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["email"]>
 
 export type EmailSelectScalar = {
@@ -654,19 +650,19 @@ export type EmailSelectScalar = {
 
 export type EmailOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "recipient" | "subject" | "body" | "scheduledAt" | "sentAt" | "status" | "senderId" | "createdAt" | "updatedAt", ExtArgs["result"]["email"]>
 export type EmailInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  sender?: boolean | Prisma.Email$senderArgs<ExtArgs>
+  sender?: boolean | Prisma.SenderDefaultArgs<ExtArgs>
 }
 export type EmailIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  sender?: boolean | Prisma.Email$senderArgs<ExtArgs>
+  sender?: boolean | Prisma.SenderDefaultArgs<ExtArgs>
 }
 export type EmailIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  sender?: boolean | Prisma.Email$senderArgs<ExtArgs>
+  sender?: boolean | Prisma.SenderDefaultArgs<ExtArgs>
 }
 
 export type $EmailPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Email"
   objects: {
-    sender: Prisma.$SenderPayload<ExtArgs> | null
+    sender: Prisma.$SenderPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -676,7 +672,7 @@ export type $EmailPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     scheduledAt: Date
     sentAt: Date | null
     status: $Enums.EmailStatus
-    senderId: string | null
+    senderId: string
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["email"]>
@@ -1073,7 +1069,7 @@ readonly fields: EmailFieldRefs;
  */
 export interface Prisma__EmailClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  sender<T extends Prisma.Email$senderArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Email$senderArgs<ExtArgs>>): Prisma.Prisma__SenderClient<runtime.Types.Result.GetResult<Prisma.$SenderPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  sender<T extends Prisma.SenderDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.SenderDefaultArgs<ExtArgs>>): Prisma.Prisma__SenderClient<runtime.Types.Result.GetResult<Prisma.$SenderPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1511,25 +1507,6 @@ export type EmailDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Interna
    * Limit how many Emails to delete.
    */
   limit?: number
-}
-
-/**
- * Email.sender
- */
-export type Email$senderArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Sender
-   */
-  select?: Prisma.SenderSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the Sender
-   */
-  omit?: Prisma.SenderOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.SenderInclude<ExtArgs> | null
-  where?: Prisma.SenderWhereInput
 }
 
 /**

@@ -6,11 +6,12 @@ import {
     updateSenderController,
     deleteSenderController
 } from "../controllers/sender.controller.js";
+import { authMiddleware } from "../middleware/auth.middleware.js";
 
 
 const router = Router();
 
-
+router.use(authMiddleware);
 router.get(
     "/",
     getAllSendersController

@@ -27,3 +27,8 @@ export type Sender = Prisma.SenderModel
  * 
  */
 export type Email = Prisma.EmailModel
+/**
+ * Model User
+ * 
+ */
+export type User = Prisma.UserModel

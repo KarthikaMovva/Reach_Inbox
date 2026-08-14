@@ -10,38 +10,51 @@ interface UpdateSenderInput {
     email?: string;
 }
 
-export async function getAllSenders() {
+export async function getAllSenders(userId: string) {
     return prisma.sender.findMany({
+        where: {
+            userId
+        },
         orderBy: {
             createdAt: "asc"
         }
     });
 }
 
-export async function getSenderById(id: string) {
-    return prisma.sender.findUnique({
+export async function getSenderById(
+    id: string,
+    userId: string
+) {
+    return prisma.sender.findFirst({
         where: {
-            id
+            id,
+            userId
         }
     });
 }
 
-export async function createSender(data: CreateSenderInput) {
+export async function createSender(
+    data: CreateSenderInput,
+    userId: string
+) {
     return prisma.sender.create({
         data: {
             name: data.name,
-            email: data.email
+            email: data.email,
+            userId
         }
     });
 }
 
 export async function updateSender(
     id: string,
+    userId: string,
     data: UpdateSenderInput
 ) {
-    const sender = await prisma.sender.findUnique({
+    const sender = await prisma.sender.findFirst({
         where: {
-            id
+            id,
+            userId
         }
     });
 
@@ -57,10 +70,14 @@ export async function updateSender(
     });
 }
 
-export async function deleteSender(id: string) {
-    const sender = await prisma.sender.findUnique({
+export async function deleteSender(
+    id: string,
+    userId: string
+) {
+    const sender = await prisma.sender.findFirst({
         where: {
-            id
+            id,
+            userId
         },
         include: {
             emails: {
@@ -85,6 +102,7 @@ export async function deleteSender(id: string) {
         (error as any).code = "HAS_EMAILS";
         throw error;
     }
+
     return prisma.sender.delete({
         where: {
             id

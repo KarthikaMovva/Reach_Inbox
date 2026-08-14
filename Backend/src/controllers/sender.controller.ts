@@ -10,11 +10,11 @@ import {
 
 
 export async function getAllSendersController(
-    _req: Request,
+    req: Request,
     res: Response
 ) {
     try {
-        const senders = await getAllSenders();
+        const senders = await getAllSenders(req.userId);
 
         return res.json(senders);
     } catch (error) {
@@ -34,7 +34,10 @@ export async function getSenderByIdController(
     try {
         const { id } = req.params;
 
-        const sender = await getSenderById(id);
+        const sender = await getSenderById(
+            id,
+            req.userId
+        );
 
         if (!sender) {
             return res.status(404).json({
@@ -69,10 +72,13 @@ export async function createSenderController(
             });
         }
 
-        const sender = await createSender({
-            name,
-            email
-        });
+        const sender = await createSender(
+            {
+                name,
+                email
+            },
+            req.userId
+        );
 
         return res.status(201).json(sender);
     } catch (error) {
@@ -103,10 +109,14 @@ export async function updateSenderController(
             });
         }
 
-        const sender = await updateSender(id, {
-            ...(name !== undefined && { name }),
-            ...(email !== undefined && { email })
-        });
+        const sender = await updateSender(
+            id,
+            req.userId,
+            {
+                ...(name !== undefined && { name }),
+                ...(email !== undefined && { email })
+            }
+        );
 
         return res.json(sender);
     } catch (error) {
@@ -135,7 +145,10 @@ export async function deleteSenderController(
     try {
         const { id } = req.params;
 
-        const sender = await deleteSender(id);
+        const sender = await deleteSender(
+            id,
+            req.userId
+        );
 
         return res.json(sender);
     } catch (error: any) {
@@ -149,7 +162,8 @@ export async function deleteSenderController(
 
         if (error.code === "HAS_EMAILS") {
             return res.status(409).json({
-                error: "Cannot delete sender because it has associated emails"
+                error:
+                    "Cannot delete sender because it has associated emails"
             });
         }
 
