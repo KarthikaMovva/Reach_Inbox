@@ -1,11 +1,6 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.registerController = registerController;
-exports.loginController = loginController;
-exports.getMeController = getMeController;
-const auth_service_js_1 = require("../services/auth.service.js");
-const jwt_js_1 = require("../utils/jwt.js");
-async function registerController(req, res) {
+import { registerUser, loginUser, getCurrentUser } from "../services/auth.service.js";
+import { generateToken } from "../utils/jwt.js";
+export async function registerController(req, res) {
     try {
         const { name, email, password } = req.body;
         if (!name || !email || !password) {
@@ -18,7 +13,7 @@ async function registerController(req, res) {
                 error: "Password must be at least 6 characters"
             });
         }
-        const user = await (0, auth_service_js_1.registerUser)({
+        const user = await registerUser({
             name,
             email,
             password
@@ -38,7 +33,7 @@ async function registerController(req, res) {
         });
     }
 }
-async function loginController(req, res) {
+export async function loginController(req, res) {
     try {
         const { email, password } = req.body;
         if (!email || !password) {
@@ -46,8 +41,8 @@ async function loginController(req, res) {
                 error: "email and password are required"
             });
         }
-        const user = await (0, auth_service_js_1.loginUser)(email, password);
-        const token = (0, jwt_js_1.generateToken)(user.id);
+        const user = await loginUser(email, password);
+        const token = generateToken(user.id);
         return res.json({
             token,
             user: {
@@ -70,14 +65,14 @@ async function loginController(req, res) {
         });
     }
 }
-async function getMeController(req, res) {
+export async function getMeController(req, res) {
     try {
         if (!req.userId) {
             return res.status(401).json({
                 error: "Unauthorized"
             });
         }
-        const user = await (0, auth_service_js_1.getCurrentUser)(req.userId);
+        const user = await getCurrentUser(req.userId);
         if (!user) {
             return res.status(404).json({
                 error: "User not found"

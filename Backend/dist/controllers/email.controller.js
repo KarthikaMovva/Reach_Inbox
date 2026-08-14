@@ -1,14 +1,5 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.createEmailController = createEmailController;
-exports.getAllEmailsController = getAllEmailsController;
-exports.getEmailByIdController = getEmailByIdController;
-exports.deleteEmailController = deleteEmailController;
-exports.getScheduledEmailsController = getScheduledEmailsController;
-exports.getSentEmailsController = getSentEmailsController;
-exports.updateEmailController = updateEmailController;
-const email_service_js_1 = require("../services/email.service.js");
-async function createEmailController(req, res) {
+import { createEmail, getAllEmails, getScheduledEmails, getSentEmails, getEmailById, deleteEmail, updateEmail } from "../services/email.service.js";
+export async function createEmailController(req, res) {
     try {
         const { recipient, subject, body, scheduledAt, senderId } = req.body;
         if (!recipient ||
@@ -20,7 +11,7 @@ async function createEmailController(req, res) {
                 error: "recipient, subject, body, scheduledAt and senderId are required"
             });
         }
-        const email = await (0, email_service_js_1.createEmail)({
+        const email = await createEmail({
             recipient,
             subject,
             body,
@@ -43,9 +34,9 @@ async function createEmailController(req, res) {
         });
     }
 }
-async function getAllEmailsController(req, res) {
+export async function getAllEmailsController(req, res) {
     try {
-        const emails = await (0, email_service_js_1.getAllEmails)(req.userId);
+        const emails = await getAllEmails(req.userId);
         return res.json(emails);
     }
     catch (error) {
@@ -55,10 +46,10 @@ async function getAllEmailsController(req, res) {
         });
     }
 }
-async function getEmailByIdController(req, res) {
+export async function getEmailByIdController(req, res) {
     try {
         const id = String(req.params.id);
-        const email = await (0, email_service_js_1.getEmailById)(id, req.userId);
+        const email = await getEmailById(id, req.userId);
         if (!email) {
             return res.status(404).json({
                 error: "Email not found"
@@ -73,10 +64,10 @@ async function getEmailByIdController(req, res) {
         });
     }
 }
-async function deleteEmailController(req, res) {
+export async function deleteEmailController(req, res) {
     try {
         const id = String(req.params.id);
-        const email = await (0, email_service_js_1.deleteEmail)(id, req.userId);
+        const email = await deleteEmail(id, req.userId);
         return res.json({
             message: "Email deleted successfully",
             email
@@ -102,9 +93,9 @@ async function deleteEmailController(req, res) {
         });
     }
 }
-async function getScheduledEmailsController(req, res) {
+export async function getScheduledEmailsController(req, res) {
     try {
-        const emails = await (0, email_service_js_1.getScheduledEmails)(req.userId);
+        const emails = await getScheduledEmails(req.userId);
         return res.json(emails);
     }
     catch (error) {
@@ -114,9 +105,9 @@ async function getScheduledEmailsController(req, res) {
         });
     }
 }
-async function getSentEmailsController(req, res) {
+export async function getSentEmailsController(req, res) {
     try {
-        const emails = await (0, email_service_js_1.getSentEmails)(req.userId);
+        const emails = await getSentEmails(req.userId);
         return res.json(emails);
     }
     catch (error) {
@@ -126,7 +117,7 @@ async function getSentEmailsController(req, res) {
         });
     }
 }
-async function updateEmailController(req, res) {
+export async function updateEmailController(req, res) {
     try {
         const id = String(req.params.id);
         const { recipient, subject, body, scheduledAt, senderId } = req.body;
@@ -139,7 +130,7 @@ async function updateEmailController(req, res) {
                 error: "At least one field is required"
             });
         }
-        const email = await (0, email_service_js_1.updateEmail)(id, req.userId, {
+        const email = await updateEmail(id, req.userId, {
             ...(recipient !== undefined && {
                 recipient
             }),

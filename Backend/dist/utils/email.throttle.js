@@ -1,16 +1,10 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.waitForEmailSendSlot = waitForEmailSendSlot;
-const redis_js_1 = __importDefault(require("../lib/redis.js"));
+import redis from "../lib/redis.js";
 const DELAY_MS = Number(process.env.EMAIL_SEND_DELAY_MS);
 const THROTTLE_KEY = "email:next-send-at";
-async function waitForEmailSendSlot() {
+export async function waitForEmailSendSlot() {
     while (true) {
         const now = Date.now();
-        const result = await redis_js_1.default.eval(`
+        const result = await redis.eval(`
             local current = redis.call("GET", KEYS[1])
 
             if not current or tonumber(current) <= tonumber(ARGV[1]) then

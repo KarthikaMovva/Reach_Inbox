@@ -1,16 +1,14 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-require("dotenv/config");
-const adapter_pg_1 = require("@prisma/adapter-pg");
-const client_js_1 = require("../generated/client.js");
+import "dotenv/config";
+import { PrismaPg } from "@prisma/adapter-pg";
+import { PrismaClient } from "../generated/client.js";
 const connectionString = process.env.DATABASE_URL;
 if (!connectionString) {
     throw new Error("DATABASE_URL is not defined");
 }
-const adapter = new adapter_pg_1.PrismaPg({
+const adapter = new PrismaPg({
     connectionString
 });
-const prisma = new client_js_1.PrismaClient({
+const prisma = new PrismaClient({
     adapter
 });
-exports.default = prisma;
+export default prisma;

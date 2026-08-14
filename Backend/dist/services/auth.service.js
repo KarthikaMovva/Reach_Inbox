@@ -1,15 +1,7 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.registerUser = registerUser;
-exports.loginUser = loginUser;
-exports.getCurrentUser = getCurrentUser;
-const bcrypt_1 = __importDefault(require("bcrypt"));
-const prisma_js_1 = __importDefault(require("../lib/prisma.js"));
-async function registerUser(data) {
-    const existingUser = await prisma_js_1.default.user.findUnique({
+import bcrypt from "bcrypt";
+import prisma from "../lib/prisma.js";
+export async function registerUser(data) {
+    const existingUser = await prisma.user.findUnique({
         where: {
             email: data.email
         }
@@ -17,8 +9,8 @@ async function registerUser(data) {
     if (existingUser) {
         throw new Error("User already exists");
     }
-    const passwordHash = await bcrypt_1.default.hash(data.password, 10);
-    const user = await prisma_js_1.default.user.create({
+    const passwordHash = await bcrypt.hash(data.password, 10);
+    const user = await prisma.user.create({
         data: {
             name: data.name,
             email: data.email,
@@ -32,8 +24,8 @@ async function registerUser(data) {
         createdAt: user.createdAt
     };
 }
-async function loginUser(email, password) {
-    const user = await prisma_js_1.default.user.findUnique({
+export async function loginUser(email, password) {
+    const user = await prisma.user.findUnique({
         where: {
             email
         }
@@ -41,14 +33,14 @@ async function loginUser(email, password) {
     if (!user) {
         throw new Error("Invalid credentials");
     }
-    const passwordMatch = await bcrypt_1.default.compare(password, user.passwordHash);
+    const passwordMatch = await bcrypt.compare(password, user.passwordHash);
     if (!passwordMatch) {
         throw new Error("Invalid credentials");
     }
     return user;
 }
-async function getCurrentUser(userId) {
-    return prisma_js_1.default.user.findUnique({
+export async function getCurrentUser(userId) {
+    return prisma.user.findUnique({
         where: {
             id: userId
         },

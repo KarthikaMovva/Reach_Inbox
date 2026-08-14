@@ -1,16 +1,6 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAllSenders = getAllSenders;
-exports.getSenderById = getSenderById;
-exports.createSender = createSender;
-exports.updateSender = updateSender;
-exports.deleteSender = deleteSender;
-const prisma_js_1 = __importDefault(require("../lib/prisma.js"));
-async function getAllSenders(userId) {
-    return prisma_js_1.default.sender.findMany({
+import prisma from "../lib/prisma.js";
+export async function getAllSenders(userId) {
+    return prisma.sender.findMany({
         where: {
             userId
         },
@@ -19,16 +9,16 @@ async function getAllSenders(userId) {
         }
     });
 }
-async function getSenderById(id, userId) {
-    return prisma_js_1.default.sender.findFirst({
+export async function getSenderById(id, userId) {
+    return prisma.sender.findFirst({
         where: {
             id,
             userId
         }
     });
 }
-async function createSender(data, userId) {
-    return prisma_js_1.default.sender.create({
+export async function createSender(data, userId) {
+    return prisma.sender.create({
         data: {
             name: data.name,
             email: data.email,
@@ -36,8 +26,8 @@ async function createSender(data, userId) {
         }
     });
 }
-async function updateSender(id, userId, data) {
-    const sender = await prisma_js_1.default.sender.findFirst({
+export async function updateSender(id, userId, data) {
+    const sender = await prisma.sender.findFirst({
         where: {
             id,
             userId
@@ -46,15 +36,15 @@ async function updateSender(id, userId, data) {
     if (!sender) {
         throw new Error("Sender not found");
     }
-    return prisma_js_1.default.sender.update({
+    return prisma.sender.update({
         where: {
             id
         },
         data
     });
 }
-async function deleteSender(id, userId) {
-    const sender = await prisma_js_1.default.sender.findFirst({
+export async function deleteSender(id, userId) {
+    const sender = await prisma.sender.findFirst({
         where: {
             id,
             userId
@@ -78,7 +68,7 @@ async function deleteSender(id, userId) {
         error.code = "HAS_EMAILS";
         throw error;
     }
-    return prisma_js_1.default.sender.delete({
+    return prisma.sender.delete({
         where: {
             id
         }

@@ -1,19 +1,7 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.createEmail = createEmail;
-exports.getAllEmails = getAllEmails;
-exports.getEmailById = getEmailById;
-exports.deleteEmail = deleteEmail;
-exports.getScheduledEmails = getScheduledEmails;
-exports.getSentEmails = getSentEmails;
-exports.updateEmail = updateEmail;
-const prisma_js_1 = __importDefault(require("../lib/prisma.js"));
-const email_queue_js_1 = require("../queue/email.queue.js");
-async function createEmail(data) {
-    const sender = await prisma_js_1.default.sender.findFirst({
+import prisma from "../lib/prisma.js";
+import { scheduleEmail, cancelScheduledEmail } from "../queue/email.queue.js";
+export async function createEmail(data) {
+    const sender = await prisma.sender.findFirst({
         where: {
             id: data.senderId,
             userId: data.userId
@@ -22,7 +10,7 @@ async function createEmail(data) {
     if (!sender) {
         throw new Error("Sender not found");
     }
-    const email = await prisma_js_1.default.email.create({
+    const email = await prisma.email.create({
         data: {
             recipient: data.recipient,
             subject: data.subject,
@@ -34,11 +22,11 @@ async function createEmail(data) {
             sender: true
         }
     });
-    await (0, email_queue_js_1.scheduleEmail)(email.id, email.scheduledAt);
+    await scheduleEmail(email.id, email.scheduledAt);
     return email;
 }
-async function getAllEmails(userId) {
-    return prisma_js_1.default.email.findMany({
+export async function getAllEmails(userId) {
+    return prisma.email.findMany({
         where: {
             sender: {
                 userId
@@ -52,8 +40,8 @@ async function getAllEmails(userId) {
         }
     });
 }
-async function getEmailById(id, userId) {
-    return prisma_js_1.default.email.findFirst({
+export async function getEmailById(id, userId) {
+    return prisma.email.findFirst({
         where: {
             id,
             sender: {
@@ -65,8 +53,8 @@ async function getEmailById(id, userId) {
         }
     });
 }
-async function deleteEmail(id, userId) {
-    const email = await prisma_js_1.default.email.findFirst({
+export async function deleteEmail(id, userId) {
+    const email = await prisma.email.findFirst({
         where: {
             id,
             sender: {
@@ -78,19 +66,19 @@ async function deleteEmail(id, userId) {
         throw new Error("Email not found");
     }
     if (email.status === "SCHEDULED") {
-        const cancelled = await (0, email_queue_js_1.cancelScheduledEmail)(id);
+        const cancelled = await cancelScheduledEmail(id);
         if (!cancelled) {
             throw new Error("Scheduled email job could not be cancelled");
         }
     }
-    return prisma_js_1.default.email.delete({
+    return prisma.email.delete({
         where: {
             id
         }
     });
 }
-async function getScheduledEmails(userId) {
-    return prisma_js_1.default.email.findMany({
+export async function getScheduledEmails(userId) {
+    return prisma.email.findMany({
         where: {
             status: "SCHEDULED",
             sender: {
@@ -105,8 +93,8 @@ async function getScheduledEmails(userId) {
         }
     });
 }
-async function getSentEmails(userId) {
-    return prisma_js_1.default.email.findMany({
+export async function getSentEmails(userId) {
+    return prisma.email.findMany({
         where: {
             status: {
                 in: ["SENT", "FAILED"]
@@ -123,8 +111,8 @@ async function getSentEmails(userId) {
         }
     });
 }
-async function updateEmail(id, userId, data) {
-    const existingEmail = await prisma_js_1.default.email.findFirst({
+export async function updateEmail(id, userId, data) {
+    const existingEmail = await prisma.email.findFirst({
         where: {
             id,
             sender: {
@@ -139,7 +127,7 @@ async function updateEmail(id, userId, data) {
         throw new Error("Only scheduled emails can be updated");
     }
     if (data.senderId) {
-        const sender = await prisma_js_1.default.sender.findFirst({
+        const sender = await prisma.sender.findFirst({
             where: {
                 id: data.senderId,
                 userId
@@ -153,12 +141,12 @@ async function updateEmail(id, userId, data) {
         data.scheduledAt.getTime() !==
             existingEmail.scheduledAt.getTime();
     if (scheduledAtChanged) {
-        const cancelled = await (0, email_queue_js_1.cancelScheduledEmail)(id);
+        const cancelled = await cancelScheduledEmail(id);
         if (!cancelled) {
             throw new Error("Scheduled email job could not be cancelled");
         }
     }
-    const updatedEmail = await prisma_js_1.default.email.update({
+    const updatedEmail = await prisma.email.update({
         where: {
             id
         },
@@ -184,7 +172,7 @@ async function updateEmail(id, userId, data) {
         }
     });
     if (scheduledAtChanged) {
-        await (0, email_queue_js_1.scheduleEmail)(updatedEmail.id, updatedEmail.scheduledAt);
+        await scheduleEmail(updatedEmail.id, updatedEmail.scheduledAt);
     }
     return updatedEmail;
 }

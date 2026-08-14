@@ -1,4 +1,4 @@
-import Redis from "ioredis";
+import { Redis } from "ioredis";
 
 const redisUrl = process.env.REDIS_URL;
 
@@ -7,7 +7,7 @@ if (!redisUrl) {
 }
 
 const redis = new Redis(redisUrl, {
-    maxRetriesPerRequest: null
+    maxRetriesPerRequest: null,
 });
 
 export default redis;
